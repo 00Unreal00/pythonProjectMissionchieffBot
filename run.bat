@@ -3,5 +3,5 @@ pip install bs4
 pip install lxml
 pip install fake-useragent
 pip install colorama
-python MissionchieffBotv3.py
+python MissionchieffBot.py
 pause
