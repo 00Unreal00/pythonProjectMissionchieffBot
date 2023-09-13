@@ -166,7 +166,7 @@ def failed_mission_runner(failed_mission_list, successfully_mission_list):
         result9 = work.get(url, headers=headers)
         soup9 = BeautifulSoup(result9.text, 'lxml')
         name = get_name(soup9)
-        data2 = car_collection(get_cars(soup9), missions_for_game.get(name) + get_patients(soup9))
+        data2 = car_collection(get_cars(soup9), missions_for_game.get(name) + get_patients(soup9), url)
         if len(data2.get('vehicle_ids[]')) != 0:
             work.post(f'{url}/alarm', headers=headers, data=data2, allow_redirects=True)
             print(Fore.GREEN + name, 'failed_mission_successfully :', count)
