@@ -34,21 +34,27 @@ def run(url):
         ms_count += 1
         if ms_count % 150 == 0:
             successfully_mission_list = check_mission_status(successfully_mission_list)
-            failed_mission_list, successfully_mission_list =\
+            failed_mission_list, successfully_mission_list = \
                 failed_mission_runner(failed_mission_list, successfully_mission_list)
         soup2 = BeautifulSoup((work.get(url, headers=headers)).text, 'lxml')
         name = get_name(soup2)
-        data2 = car_collection(get_cars(soup2), missions_for_game.get(name) + get_patients(soup2), url)
-        time.sleep(time_send // 2)
-        if len(data2.get('vehicle_ids[]')) != 0:
-            work.post(f'{url}/alarm', headers=headers, data=data2, allow_redirects=True)
-            print(Fore.GREEN + name, 'successfully :', ms_count)
-            successfully_mission_list.append(url)
+        if name == True:
+            try:
+                url = get_next_url(soup2)
+            except AttributeError:
+                print('goodbye')
         else:
-            print(Fore.RED + name, "failed :", ms_count)
-            failed_mission_list.append(url)
-        url = get_next_url(soup2)
-        time.sleep(time_send // 2)
+            data2 = car_collection(get_cars(soup2), missions_for_game.get(name) + get_patients(soup2), url)
+            time.sleep(time_send // 2)
+            if len(data2.get('vehicle_ids[]')) != 0:
+                work.post(f'{url}/alarm', headers=headers, data=data2, allow_redirects=True)
+                print(Fore.GREEN + name, 'successfully :', ms_count)
+                successfully_mission_list.append(url)
+            else:
+                print(Fore.RED + name, "failed :", ms_count)
+                failed_mission_list.append(url)
+            url = get_next_url(soup2)
+            time.sleep(time_send // 2)
 
 
 def get_name(soup3):
@@ -135,18 +141,18 @@ def get_next_url(soup7):
 
 def check_mission_status(mission_list):
     counter = 0
-    for key in mission_list:
+    for url in mission_list:
         counter += 1
-        result7 = work.get(key, headers=headers)
+        result7 = work.get(url, headers=headers)
         soup7 = BeautifulSoup(result7.text, 'lxml')
         count = get_patients(soup7)
         check_prisoner(soup7, counter)
         if len(count) != 0:
             data2 = car_collection(get_cars(soup7), count, url)
-            work.post(f'{key}/alarm', headers=headers, data=data2, allow_redirects=True)
+            work.post(f'{url}/alarm', headers=headers, data=data2, allow_redirects=True)
             print('ambulance', counter)
-        if get_name(soup7):
-            mission_list.remove(key)
+        if get_name(soup7) == True:
+            mission_list.remove(url)
     return mission_list
 
 
