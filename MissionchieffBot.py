@@ -24,7 +24,9 @@ data = {'authenticity_token': token,
         'user[email]': config["login"]["username"].replace('"', ''),
         'user[password]': config['login']['password'].replace('"', '')}
 result = work.post('https://www.dispetcher112.ru/users/sign_in', headers=headers, data=data, allow_redirects=True)
-
+soup = BeautifulSoup(result.text, 'lxml')
+token = soup.findAll('input')
+token = token[4].get('value')
 
 def run(url):
     ms_count = 0
