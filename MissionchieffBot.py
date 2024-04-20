@@ -138,6 +138,7 @@ def car_collection(dict_c, task_list, url):
 
 def get_next_url(soup7):
     next_url = f"https://www.dispetcher112.ru{((soup7.find('div', class_='navbar-header')).find_all('div')[1].find_all('a')[1]).get('href')}"
+    next_url = next_url[0:next_url.find('?')-1]
     return next_url
 
 
